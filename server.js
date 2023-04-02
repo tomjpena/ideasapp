@@ -3,52 +3,19 @@ const port = 5000;
 
 const app = express();
 
-const ideas = [
-  {
-    id: 1,
-    text: 'Positive NewsLetter, a newsletter that only shares positive, uplifting news',
-    tag: 'Technology',
-    username: 'TonyStark',
-    date: '2022-01-02',
-  },
-  {
-    id: 2,
-    text: 'Milk cartons that turn a different color the older that your milk is getting',
-    tag: 'Inventions',
-    username: 'SteveRogers',
-    date: '2022-01-02',
-  },
-  {
-    id: 3,
-    text: 'ATM location app which lets you know where the closest ATM is and if it is in service',
-    tag: 'Software',
-    username: 'BruceBanner',
-    date: '2022-01-02',
-  },
-];
+// Body parser middleware
+//This will parse data passed into the body. Usually form data or JSON
+//The .use method specifies the use of middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (request, response) => {
   response.json({ message: 'Welcome to the RandomIdeas API' });
 });
 
-//Get all ideas
-app.get('/api/ideas', (request, response) => {
-  response.json({ success: true, data: ideas });
-});
-//the :id will get
-app.get('/api/ideas/:id', (request, response) => {
-  //higher order array method find() will loop through ideas with a function and find the idea with the same id as the id being searched for in the request
-  const idea = ideas.find((idea) => idea.id === +request.params.id);
-
-  //this runs if there is no matching id
-  if (!idea) {
-    return response
-      .status(404)
-      .json({ success: false, error: 'Resources not found' });
-  }
-
-  //this responds with the idea
-  response.json({ success: true, data: idea });
-});
+//imports the express object from ideas.js in the /routes/ folder
+const ideasRouter = require('./routes/ideas');
+//  This passes the base route to the get/post/delete/put methods as the start of the route into the express object created in the previous line
+app.use('/api/ideas', ideasRouter);
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));
